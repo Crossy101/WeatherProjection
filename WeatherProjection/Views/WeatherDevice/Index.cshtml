@@ -1,0 +1,71 @@
+﻿@model IEnumerable<WeatherProjection.Models.WeatherDevice>
+@{
+    ViewBag.Title = "Index";
+
+    var searchModel = Model.ToList();
+}
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <link rel="stylesheet" href="~/Content/WeatherDevice/index.css" />
+</head>
+<body>
+    <div class="container-fluid">
+        
+        <div style="margin-top: 2%;" class="row">
+            @using (Html.BeginForm("Search", "WeatherDevice", FormMethod.Post))
+            {
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="idInput">Device ID</label>
+                        @Html.TextBox("Id", "", new { @class = "form-control", @placeholder = "Enter ID of Device" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="nameInput">Name</label>
+                        @Html.TextBox("Name", "", new { @class = "form-control", @placeholder = "Enter Name of Device" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="locationInput">Location</label>
+                        @Html.TextBox("Location", "", new { @class = "form-control", @placeholder = "Enter Location" })
+                    </div>
+                </div>
+                <div class="col-md-3" style="margin-top: 2%; margin-bottom: 2%;">
+                    <button class="btn btn-success" type="submit">Search</button>
+                </div>
+            }
+        </div>
+
+        <table id="WeatherDeviceTable" class="table table-bordered">
+            <tr>
+                <th>Device ID</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Installed Date</th>
+            </tr>
+            @{
+                if (Model.Any())
+                {
+                    foreach (var weatherDevice in Model)
+                    {
+                        <tr>
+                            <th>@Html.ActionLink(weatherDevice.Id, "Details", new { Id = weatherDevice.Id })</th>
+                            <th>@weatherDevice.Name</th>
+                            <th>@weatherDevice.Location</th>
+                            <th>@weatherDevice.InstalledDate</th>
+                        </tr>
+                    }
+                }
+            }
+        </table>
+        @if (Request.IsAuthenticated)
+        {
+            @Html.ActionLink("Create a New Device", "Create", new { }, new { @class = "btn btn-success" });
+        }
+    </div>
+</body>

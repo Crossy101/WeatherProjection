@@ -1,0 +1,16 @@
+﻿.panel {
+    background-color: #e6e9ed;
+    margin-top: 5%;
+}
+
+#WeatherDeviceActive {
+    color: green;
+}
+
+#WeatherDeviceInActive {
+    color: red;
+}
+
+#DeviceText {
+    line-height: 25px;
+}

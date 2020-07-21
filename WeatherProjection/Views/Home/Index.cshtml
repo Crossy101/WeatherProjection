@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WeatherProjection.Models.WeatherDevice>
+@{
+    ViewBag.Title = "Weather Projection";
+}
+
+<head>
+    <link rel="stylesheet" href="~/Content/Home/Index.css"/>
+</head>
+
+<body>
+    <!-- Weather Devices Listed -->
+    <div class="container-fluid">
+        <div class="row">
+            @{
+                foreach (var weatherDevice in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <h4>
+                                    <span id="DeviceText">
+                                        <b>Name: @weatherDevice.Name</b> <br />
+                                        <b>Location: @weatherDevice.Location</b> <br />
+                                        <b>Latest Update: @weatherDevice.LatestWeatherUpdate</b> <br />
+
+                                        @if (weatherDevice.ActiveDevice)
+                                        {
+                                            <b>Status: <span id="WeatherDeviceActive">ACTIVE</span></b> <br />
+                                        }
+                                        else
+                                        {
+                                            <b>Status: <span id="WeatherDeviceInActive">INACTIVE</span></b> <br />
+                                        }
+                                    </span>
+                                </h4>
+                                @Html.ActionLink("More Info", "Details", "WeatherDevice", new { Id = weatherDevice.Id }, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</body>
+

@@ -1,0 +1,407 @@
+﻿@model WeatherProjection.Models.DetailsWeatherDevice
+
+@{
+    ViewBag.Title = "View";
+}
+
+<head>
+    <link rel="stylesheet" href="~/Content/WeatherDevice/Details.css" />
+    <!--Chart JS Link-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+    <h2>@Model.CurrentDevice.Name Details</h2>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <hr />
+                <dl class="dl-horizontal">
+                    <span id="WeatherDeviceDetails">
+                        <h3>
+                            ID: @Model.CurrentDevice.Id <br />
+                            Name: @Model.CurrentDevice.Name <br />
+                            Location: @Model.CurrentDevice.Location <br />
+                            Latest Weather Time: @Model.CurrentDevice.LatestWeatherUpdate <br />
+                            Next Maintenance: @Model.CurrentDevice.NextMaintenanceDate <br />
+                            Active: @Model.CurrentDevice.ActiveDevice
+                        </h3>
+                    </span>
+                </dl>
+            </div>
+            <ul class="nav nav-tabs">
+                @Html.ActionLink("Past 1 Hour", "Details", new { Id = Model.CurrentDevice.Id, displayType = 0 }, new { @class = "btn btn-primary", @style = "margin-bottom: 1%;" })
+                @Html.ActionLink("Past 6 Hours", "Details", new { Id = Model.CurrentDevice.Id, displayType = 1 }, new { @class = "btn btn-primary", @style = "margin-bottom: 1%;" })
+                @Html.ActionLink("Past 24 Hours", "Details", new { Id = Model.CurrentDevice.Id, displayType = 2 }, new { @class = "btn btn-primary", @style = "margin-bottom: 1%;" })
+                @Html.ActionLink("Past 7 Days", "Details", new { Id = Model.CurrentDevice.Id, displayType = 3 }, new { @class = "btn btn-primary", @style = "margin-bottom: 1%;" })
+                @Html.ActionLink("Past 30 Days", "Details", new { Id = Model.CurrentDevice.Id, displayType = 4 }, new { @class = "btn btn-primary", @style = "margin-bottom: 1%;" })
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <center><h2>Green House Effect</h2></center>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <center>
+                <h3>
+                    <div id="chartTitle" class="col-md-6">
+                        Temperature
+                    </div>
+                    <div class="col-md-6">
+                        Humidity
+                    </div>
+                </h3>
+            </center>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="tempChart" style="max-height: 600px; max-width: 600px;"></canvas>
+                <script>
+                    var ctx = document.getElementById('tempChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                            datasets: [{
+                                label: '',
+                                data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.Temperature)))],
+                                backgroundColor: [
+                                    'rgba(242, 166, 5, 0.5)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
+            <div class="col-md-6">
+                <canvas id="humidityChart" style="max-height: 600px; max-width: 600px;"></canvas>
+                <script>
+                    var ctx = document.getElementById('humidityChart').getContext('2d');
+                    var secondChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                            datasets: [{
+                                label: '',
+                                data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.Humidity)))],
+                                backgroundColor: [
+                                    'rgba(56, 175, 235, 0.6)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <center>
+                    <h3>
+                        Dew Point
+                    </h3>
+                </center>
+            </div>
+            <div class="col-md-6">
+                <center>
+                    <h3>
+                        Heat Index
+                    </h3>
+                </center>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="dewPointChart" style="max-height: 500px; max-width: 1200px;"></canvas>
+                <script>
+                    var ctx = document.getElementById('dewPointChart').getContext('2d');
+                    var secondChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                            datasets: [{
+                                label: '',
+                                data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.DewPoint)))],
+                                backgroundColor: [
+                                    'rgba(159, 50, 237, 0.6)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
+            <div class="col-md-6">
+            <canvas id="heatIndexChart" style="max-height: 500px; max-width: 1200px;"></canvas>
+            <script>
+                    var ctx = document.getElementById('heatIndexChart').getContext('2d');
+                    var secondChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                            datasets: [{
+                                label: '',
+                                data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.HeatIndex)))],
+                                backgroundColor: [
+                                    'rgba(159, 50, 237, 0.6)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+            </script>
+        </div>
+
+        </div>
+        <hr />
+            <center><h2>Green House Emissions</h2></center>
+        <hr />
+        <div class="row">
+
+            <div class="col-md-6">
+                <center><h3>Liquefied Petroleum Gas</h3></center>
+            </div>
+            <div class="col-md-6">
+                <center><h3>Carbon Emissions</h3></center>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="LPGChart" style="max-height: 500px; max-width: 1200px;"></canvas>
+                <script>
+                    var ctx = document.getElementById('LPGChart').getContext('2d');
+                    var secondChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                            datasets: [{
+                                label: '',
+                                data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.LPG)))],
+                                backgroundColor: [
+                                    'rgba(245, 65, 0, 0.6)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
+            <div class="col-md-6">
+                <canvas id="CEChart" style="max-height: 500px; max-width: 1200px;"></canvas>
+                <script>
+                    var ctx = document.getElementById('CEChart').getContext('2d');
+                    var secondChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                            datasets: [{
+                                label: '',
+                                data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.CarbonEmissions)))],
+                                backgroundColor: [
+                                    'rgba(159, 50, 237, 0.6)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <center><h3>Smoke Detected</h3></center>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <canvas id="SmokeChart" style="max-height: 500px; max-width: 1200px;"></canvas>
+                <script>
+                var ctx = document.getElementById('SmokeChart').getContext('2d');
+                var secondChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [@Html.Raw(string.Join(", ", Model.WeatherUpdates.Select(wu => $"'{wu.TimeUpdateSent.ToString("MM/dd/yyyy HH:mm:ss")}'")))],
+                        datasets: [{
+                            label: '',
+                            data: [@(string.Join(", ", Model.WeatherUpdates.Select(wu => wu.Smoke)))],
+                            backgroundColor: [
+                                'rgba(107, 104, 110, 0.6)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+                </script>
+            </div>
+        </div>
+
+        <p>
+            @if (Request.IsAuthenticated)
+            {
+                @Html.ActionLink("Edit", "Edit", new { Id = Model.CurrentDevice.Id }, new { @class = "btn btn-primary", @style = "margin-top: 1%;" })
+            }
+            @Html.ActionLink("Back to List", "Index", new { }, new { @class = "btn btn-primary", @style = "margin-top: 1%;" })
+        </p>
+    </div>
+</body>
